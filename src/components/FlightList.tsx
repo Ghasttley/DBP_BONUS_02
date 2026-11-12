@@ -17,7 +17,7 @@ const inputClass = "border-2 border-gray-500 rounded-full px-4 py-1 bg-white";
 export default function FlightList() {
 	const [flightNumber, setFlightNumber] = useState("");
 	const [airlineName, setAirlineName] = useState("");
-	const [dateFrom, setDateFrom] = useState(""); // Nice to have
+	const [dateFrom, setDateFrom] = useState(""); 
 	const [flights, setFlights] = useState<Flight[]>([]);
 	
 	const [error, setError] = useState("");
@@ -40,7 +40,6 @@ export default function FlightList() {
 				params: {
 					flightNumber: flightNumber || undefined,
 					airlineName: airlineName || undefined,
-					//  conversión guía
 					estDepartureTimeFrom: dateFrom ? new Date(dateFrom).toISOString() : undefined,
 				},
 			});
@@ -55,24 +54,23 @@ export default function FlightList() {
 	async function handleBook(flightId: number) {
 		setError("");
 		setSuccessMsg("");
-		
+
 		if (!token) {
-			setError("You must log in to make a reserve...");
+			setError("You must log in to make a reservation.");
 			return;
 		}
 
 		try {
 			const { data } = await api.post("/flights/book", { flightId });
-			
-			// Nice to have
+
 			const me = (await api.get("/users/current")).data;
 			const key = `bookings:${me.email}`;
 			const ids = JSON.parse(localStorage.getItem(key) ?? "[]");
 			localStorage.setItem(key, JSON.stringify([...ids, data.id]));
 
-			setSuccessMsg(`¡Vuelo reservado con éxito! ID de reserva: ${data.id}`);
+			setSuccessMsg(`Vuelo reservado. ID de reserva: ${data.id}`);
 		} catch (err) {
-			setError(errorMessage(err));
+			setError(errorMessage(err)); 
 		}
 	}
 
@@ -82,7 +80,7 @@ export default function FlightList() {
 
 	return (
 		<div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-center">
-			<h1 className="text-2xl font-bold mb-4">Flight search </h1>
+			<h1 className="text-2xl font-bold mb-4">Flight Search</h1>
 
 			<form onSubmit={handleSearch} className="w-full flex flex-wrap gap-2 mb-6 justify-center">
 				<input
@@ -106,7 +104,7 @@ export default function FlightList() {
 					onChange={(e) => setDateFrom(e.target.value)}
 					title="Fecha de salida desde"
 				/>
-				<button type="submit" disabled={loading} className="bg-gray-500 text-white font-bold px-6 py-1 rounded-full">
+				<button type="submit" disabled={loading} className="bg-gray-500 text-white font-bold px-6 py-1 rounded-full cursor-pointer hover:bg-gray-600">
 					{loading ? "Buscando..." : "Buscar"}
 				</button>
 			</form>
@@ -114,15 +112,14 @@ export default function FlightList() {
 			{error && <p className="text-red-700 font-bold mb-4">{error}</p>}
 			{successMsg && <p className="text-green-700 font-bold mb-4">{successMsg}</p>}
 
-			{/* Tabla de Resultados */}
 			{searched && flights.length === 0 && !loading && (
-				<p className="text-lg"> No flights were found with the selected filters.</p>
+				<p className="text-lg">No flights were found with the selected filters.</p>
 			)}
 
 			{flights.length > 0 && (
 				<div className="w-full overflow-x-auto">
-					<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden">
-						<thead className="bg-gray-200">
+					<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
+						<thead className="bg-gray-200 text-gray-700">
 							<tr>
 								<th className="p-3">Número</th>
 								<th className="p-3">Aerolínea</th>
@@ -134,7 +131,7 @@ export default function FlightList() {
 						</thead>
 						<tbody>
 							{flights.map((flight) => (
-								<tr key={flight.id} className="border-b">
+								<tr key={flight.id} className="border-b hover:bg-gray-50">
 									<td className="p-3">{flight.flightNumber}</td>
 									<td className="p-3">{flight.airlineName}</td>
 									<td className="p-3">{formatDate(flight.estDepartureTime)}</td>
@@ -144,12 +141,12 @@ export default function FlightList() {
 										{token ? (
 											<button
 												onClick={() => handleBook(flight.id)}
-												className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer"
+												className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700"
 											>
 												Reserve
 											</button>
 										) : (
-											<span className="text-gray-500 text-sm">Log in</span>
+											<span className="text-gray-500 text-sm italic">Log in to book</span>
 										)}
 									</td>
 								</tr>

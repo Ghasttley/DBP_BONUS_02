@@ -50,7 +50,7 @@ export default function Register() {
 
 	return (
 		<div className="size-full flex justify-center items-center">
-			<article className="w-full sm:w-4/5 md:w-3/5 lg:w-2/5 bg-slate-200 sm:rounded-xl sm:my-5 px-10 py-4 flex flex-col items-center">
+			<article className="w-full sm:w-4/5 md:w-3/5 lg:w-2/5 bg-stone-700 sm:rounded-xl sm:my-5 px-10 py-4 flex flex-col items-center">
 				<h1 className="text-2xl font-bold mb-3">Register Form</h1>
 
 				<form onSubmit={handleSubmit} className="w-full">

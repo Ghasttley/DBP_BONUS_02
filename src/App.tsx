@@ -7,6 +7,7 @@ import Login from "./components/Login";
 import FlightList from "./components/FlightList";
 import ReserveList from "./components/ReserveList";
 import BookingDetail from "./components/BookingDetail";
+import FlightBooking from "./components/FlightBooking";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
 	const token = localStorage.getItem("token");
@@ -23,7 +24,7 @@ export default function App() {
 					path="/" 
 					element={
 						localStorage.getItem("token") 
-							? <Navigate to="/flights" replace /> 
+							? <Navigate to="/flights/search" replace />
 							: <Navigate to="/login" replace />
 					} 
 				/>
@@ -31,7 +32,8 @@ export default function App() {
 				<Route path="/login" element={<Login />} />
 				<Route path="/register" element={<Register />} />
 				
-				<Route path="/flights" element={<ProtectedRoute><FlightList /></ProtectedRoute>} />
+				<Route path="/flights/search" element={<ProtectedRoute><FlightList /></ProtectedRoute>} />
+				<Route path="/flights/book" element={<ProtectedRoute><FlightBooking /></ProtectedRoute>} />
 				<Route path="/bookings" element={<ProtectedRoute><ReserveList /></ProtectedRoute>} />
 				<Route path="/bookings/:id" element={<ProtectedRoute><BookingDetail /></ProtectedRoute>} />
 

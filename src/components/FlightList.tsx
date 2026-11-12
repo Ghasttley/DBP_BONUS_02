@@ -85,14 +85,14 @@ export default function FlightList() {
 			<form onSubmit={handleSearch} className="w-full flex flex-wrap gap-2 mb-6 justify-center">
 				<input
 					type="text"
-					placeholder="Número de vuelo"
+					placeholder="Flight number"
 					className={inputClass}
 					value={flightNumber}
 					onChange={(e) => setFlightNumber(e.target.value)}
 				/>
 				<input
 					type="text"
-					placeholder="Aerolínea"
+					placeholder="Airline"
 					className={inputClass}
 					value={airlineName}
 					onChange={(e) => setAirlineName(e.target.value)}
@@ -105,7 +105,7 @@ export default function FlightList() {
 					title="Fecha de salida desde"
 				/>
 				<button type="submit" disabled={loading} className="bg-gray-500 text-white font-bold px-6 py-1 rounded-full cursor-pointer hover:bg-gray-600">
-					{loading ? "Buscando..." : "Buscar"}
+					{loading ? "Searching..." : "Search"}
 				</button>
 			</form>
 
@@ -121,12 +121,12 @@ export default function FlightList() {
 					<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
 						<thead className="bg-gray-200 text-gray-700">
 							<tr>
-								<th className="p-3">Número</th>
-								<th className="p-3">Aerolínea</th>
-								<th className="p-3">Salida</th>
-								<th className="p-3">Llegada</th>
-								<th className="p-3">Asientos</th>
-								<th className="p-3">Acción</th>
+								<th className="p-3">Number</th>
+								<th className="p-3">Airline</th>
+								<th className="p-3">Departure</th>
+								<th className="p-3">Arrival</th>
+								<th className="p-3">Sits</th>
+								<th className="p-3">Action</th>
 							</tr>
 						</thead>
 						<tbody>

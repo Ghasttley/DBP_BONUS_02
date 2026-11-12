@@ -44,14 +44,24 @@ export default function Navbar() {
 					
 					<div className="flex gap-2">
 						<Link 
-							to="/flights" 
+							to="/flights/search" 
 							className={`px-5 py-2 rounded-md font-semibold transition-colors ${
-								location.pathname === "/flights" 
+								location.pathname === "/flights/search" 
 									? "bg-blue-600 text-white" 
 									: "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white"
 							}`}
 						>
 							Searches
+						</Link>
+						<Link 
+							to="/flights/book" 
+							className={`px-5 py-2 rounded-md font-semibold transition-colors ${
+								location.pathname === "/flights/book" 
+									? "bg-blue-600 text-white" 
+									: "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white"
+							}`}
+						>
+							Booking
 						</Link>
 						<Link 
 							to="/bookings" 

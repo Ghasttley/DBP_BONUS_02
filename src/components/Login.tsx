@@ -19,6 +19,9 @@ export default function Login() {
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState(false);
 	const [loading, setLoading] = useState(false);
+	
+	const [userName, setUserName] = useState(""); 
+	
 	const navigate = useNavigate();
 
 	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -28,17 +31,21 @@ export default function Login() {
 
 		const { email, password } = loginData;
 		if (!email || !password) {
-			setError("Todos los campos son obligatorios");
+			setError("All parameters must be filled...");
 			return;
 		}
 
 		setLoading(true);
 		try {
-			// para el backend
 			const { data } = await api.post("/auth/login", loginData);
 			localStorage.setItem("token", data.token);
+
+			const me = (await api.get("/users/current")).data;
+			setUserName(me.firstName);
+
 			setSuccess(true);
-		        setTimeout(() => navigate("/flights"), 1000); 
+			
+			setTimeout(() => navigate("/flights/search"), 1500); 
 		} catch (err) {
 			setError(errorMessage(err));
 		} finally {
@@ -48,7 +55,7 @@ export default function Login() {
 
 	return (
 		<div className="size-full flex justify-center items-center">
-			<article className="w-full sm:w-4/5 md:w-3/5 lg:w-2/5 bg-slate-200 sm:rounded-xl sm:my-5 px-10 py-4 flex flex-col items-center">
+			<article className="w-full sm:w-4/5 md:w-3/5 lg:w-2/5 bg-stone-700 sm:rounded-xl sm:my-5 px-10 py-4 flex flex-col items-center">
 				<h1 className="text-2xl font-bold mb-3">Login Form</h1>
 
 				<form onSubmit={handleSubmit} className="w-full">
@@ -88,9 +95,9 @@ export default function Login() {
 						<button
 							type="submit"
 							disabled={loading}
-							className="bg-gray-500 px-10 mt-1 py-1 rounded-full text-white font-bold cursor-pointer disabled:opacity-50"
+							className="bg-gray-500 px-10 mt-1 py-1 rounded-full text-white font-bold cursor-pointer disabled:opacity-50 hover:bg-gray-600 transition"
 						>
-							{loading ? "Cargando..." : "Entrar"}
+							{loading ? "Loading..." : "Entrar"}
 						</button>
 					</section>
 
@@ -98,7 +105,7 @@ export default function Login() {
 						Don't have an account?{" "}
 						<Link
 							to="/register"
-							className="font-medium text-foreground underline"
+							className="font-medium text-blue-300 underline"
 						>
 							Register
 						</Link>
@@ -106,14 +113,14 @@ export default function Login() {
 				</form>
 
 				{error && (
-					<p className="mt-4 font-bold text-red-700" role="alert">
+					<p className="mt-4 font-bold text-red-400 bg-red-900/50 px-4 py-2 rounded" role="alert">
 						{error}
 					</p>
 				)}
 
 				{success && (
-					<p className="mt-4 font-bold text-green-700" role="status">
-						Session resumed.
+					<p className="mt-4 font-bold text-green-400 bg-green-900/50 px-4 py-2 rounded" role="status">
+						Welcome, {userName}! Redirecting...
 					</p>
 				)}
 			</article>

@@ -29,20 +29,23 @@ export default function Login() {
 		setError("");
 		setSuccess(false);
 
-		const { email, password } = loginData;
-		if (!email || !password) {
+		const cleanEmail = loginData.email.trim();
+		const cleanPassword = loginData.password.trim();
+
+	if (!cleanEmail || !cleanPassword) {
 			setError("All parameters must be filled...");
 			return;
 		}
 
 		setLoading(true);
 		try {
-			const { data } = await api.post("/auth/login", loginData);
-			localStorage.setItem("token", data.token);
+			const { data } = await api.post("/auth/login", {
+				email: cleanEmail,
+				password: cleanPassword,
+			}); localStorage.setItem("token", data.token);
 
 			const me = (await api.get("/users/current")).data;
 			setUserName(me.firstName);
-
 			setSuccess(true);
 			
 			setTimeout(() => navigate("/flights/search"), 1500); 

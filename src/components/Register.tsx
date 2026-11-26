@@ -30,17 +30,40 @@ export default function Register() {
 		setError("");
 		setSuccess(false);
 
-		const { firstName, lastName, email, password } = registerData;
-			if (!firstName || !lastName || !email || !password) {
-			setError("Todos los campos son obligatorios");
-				return;
-			}
+		const cleanFirstName = registerData.firstName.trim();
+		const cleanLastName = registerData.lastName.trim();
+		const cleanEmail = registerData.email.trim();
+		const cleanPassword = registerData.password.trim();
 
-			setLoading(true);
-			try { // Envía al backend
-				await api.post("/users/register", registerData);
+		if (!cleanFirstName || !cleanLastName || !cleanEmail || !cleanPassword) {
+			setError("Todos los campos son obligatorios");
+			return;
+		}
+
+		if (cleanFirstName.length < 2 || cleanFirstName.length > 50) {
+			setError("El nombre debe tener entre 2 y 50 caracteres");
+			return;
+		}
+
+		if (cleanLastName.length < 2 || cleanLastName.length > 50) {
+			setError("El apellido debe tener entre 2 y 50 caracteres");
+			return;
+		}
+
+		if (cleanPassword.length < 8 || cleanPassword.length > 100) {
+			setError("La contraseña debe tener entre 8 y 100 caracteres");
+			return;
+		} setLoading(true);
+			try { 
+				await api.post("/users/register", {
+					firstName: cleanFirstName,
+					lastName: cleanLastName,
+					email: cleanEmail,
+					password: cleanPassword,
+				});
+				
 				setSuccess(true);
-				setTimeout(() => navigate("/login"), 1500); // redirige al login
+				setTimeout(() => navigate("/login"), 1500);
 			} catch (err) {
 				setError(errorMessage(err));
 			} finally {

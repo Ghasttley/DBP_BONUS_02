@@ -22,12 +22,11 @@ export default function FlightBooking() {
 	const [estDepartureTime, setEstDepartureTime] = useState(""); 
     const [estArrivalTime, setEstArrivalTime] = useState(""); 
 	const [flights, setFlights] = useState<Flight[]>([]);
-    // const [sits, setSits] = useState<Sits[]>([]);
 	
 	const [error, setError] = useState("");
 	const [successMsg, setSuccessMsg] = useState("");
 	const [booking, setBooking] = useState(false);
-	const [booked, setBooked] = useState(false);
+	const [searched, setSearched] = useState(false);
 	
 	const navigate = useNavigate();
 	const token = localStorage.getItem("token");
@@ -37,7 +36,7 @@ export default function FlightBooking() {
 		setError("");
 		setSuccessMsg("");
 		setBooking(true);
-		setBooked(true);
+		setSearched(true);
 
 		try {
 			const { data } = await api.get("/flights/book", {
@@ -136,10 +135,12 @@ export default function FlightBooking() {
 				</button>
 			</form>
 
-            
-
 			{error && <p className="text-red-700 font-bold mb-4">{error}</p>}
 			{successMsg && <p className="text-green-700 font-bold mb-4">{successMsg}</p>}
+
+			{searched && flights.length === 0 && !booking && (
+				<p className="text-lg">No se encontraron vuelos con esos filtros.</p>
+			)}
 
 			{flights.length > 0 && (
 				<div className="w-full overflow-x-auto">

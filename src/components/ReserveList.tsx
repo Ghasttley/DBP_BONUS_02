@@ -12,6 +12,7 @@ interface Booking {
 export default function ReserveList() {
 	const [bookings, setBookings] = useState<Booking[]>([]);
 	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState("");
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -35,6 +36,7 @@ export default function ReserveList() {
 				
 				setBookings(validBookings);
 			} catch (err) {
+				setError("Error al cargar las reservas. Intenta de nuevo.");
 				console.error("Error al cargar reservas", err);
 			} finally {
 				setLoading(false);
@@ -45,13 +47,14 @@ export default function ReserveList() {
 	}, []);
 
 	if (loading) return <p className="text-center mt-10">Cargando reservas...</p>;
+	if (error) return <p className="text-red-700 text-center mt-10">{error}</p>;
 
 	return (
 		<div className="w-full max-w-4xl mx-auto p-4 flex flex-col items-center">
-			<h1 className="text-2xl font-bold mb-4">My Reserves</h1>
+			<h1 className="text-2xl font-bold mb-4">Mis Reservas</h1>
 			
 			{bookings.length === 0 ? (
-				<p>You don't have saved reserves.</p>
+				<p>No tiene reservas guardadas.</p>
 			) : (
 				<div className="w-full overflow-x-auto">
 					<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-md">

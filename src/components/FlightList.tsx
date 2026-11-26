@@ -24,12 +24,16 @@ export default function FlightList() {
 	const [successMsg, setSuccessMsg] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [searched, setSearched] = useState(false);
+
+	const [page, setPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const limit = 5;
 	
 	const navigate = useNavigate();
 	const token = localStorage.getItem("token");
 
-	async function handleSearch(e: FormEvent) {
-		e.preventDefault();
+	async function handleSearch(e?: FormEvent, newPage = 1) {
+		e?.preventDefault();
 		setError("");
 		setSuccessMsg("");
 		setLoading(true);
@@ -41,9 +45,13 @@ export default function FlightList() {
 					flightNumber: flightNumber || undefined,
 					airlineName: airlineName || undefined,
 					estDepartureTimeFrom: dateFrom ? new Date(dateFrom).toISOString() : undefined,
+					page: newPage,
+					limit,
 				},
 			});
 			setFlights(data.items);
+			setPage(newPage);
+			setTotalPages(data.totalPages || 1);
 		} catch (err) {
 			setError(errorMessage(err));
 		} finally {
@@ -82,7 +90,7 @@ export default function FlightList() {
 		<div className="w-full max-w-5xl mx-auto p-4 flex flex-col items-center">
 			<h1 className="text-2xl font-bold mb-4">Flight Search</h1>
 
-			<form onSubmit={handleSearch} className="w-full flex flex-wrap gap-2 mb-6 justify-center">
+			<form onSubmit={(e) => handleSearch(e, 1)} className="w-full flex flex-wrap gap-2 mb-6 justify-center">
 				<input
 					type="text"
 					placeholder="Flight number"
@@ -117,43 +125,63 @@ export default function FlightList() {
 			)}
 
 			{flights.length > 0 && (
-				<div className="w-full overflow-x-auto">
-					<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
-						<thead className="bg-gray-200 text-gray-700">
-							<tr>
-								<th className="p-3">Number</th>
-								<th className="p-3">Airline</th>
-								<th className="p-3">Departure</th>
-								<th className="p-3">Arrival</th>
-								<th className="p-3">Sits</th>
-								<th className="p-3">Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							{flights.map((flight) => (
-								<tr key={flight.id} className="border-b hover:bg-gray-50">
-									<td className="p-3">{flight.flightNumber}</td>
-									<td className="p-3">{flight.airlineName}</td>
-									<td className="p-3">{formatDate(flight.estDepartureTime)}</td>
-									<td className="p-3">{formatDate(flight.estArrivalTime)}</td>
-									<td className="p-3">{flight.availableSeats}</td>
-									<td className="p-3">
-										{token ? (
-											<button
-												onClick={() => handleBook(flight.id)}
-												className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700"
-											>
-												Reserve
-											</button>
-										) : (
-											<span className="text-gray-500 text-sm italic">Log in to book</span>
-										)}
-									</td>
+				<>
+					<div className="w-full overflow-x-auto">
+						<table className="w-full text-left border-collapse bg-white rounded-lg overflow-hidden shadow-sm">
+							<thead className="bg-gray-200 text-gray-700">
+								<tr>
+									<th className="p-3">Number</th>
+									<th className="p-3">Airline</th>
+									<th className="p-3">Departure</th>
+									<th className="p-3">Arrival</th>
+									<th className="p-3">Sits</th>
+									<th className="p-3">Action</th>
 								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
+							</thead>
+							<tbody>
+								{flights.map((flight) => (
+									<tr key={flight.id} className="border-b hover:bg-gray-50">
+										<td className="p-3">{flight.flightNumber}</td>
+										<td className="p-3">{flight.airlineName}</td>
+										<td className="p-3">{formatDate(flight.estDepartureTime)}</td>
+										<td className="p-3">{formatDate(flight.estArrivalTime)}</td>
+										<td className="p-3">{flight.availableSeats}</td>
+										<td className="p-3">
+											{token ? (
+												<button
+													onClick={() => handleBook(flight.id)}
+													className="bg-blue-600 text-white px-4 py-1 rounded cursor-pointer hover:bg-blue-700"
+												>
+													Reserve
+												</button>
+											) : (
+												<span className="text-gray-500 text-sm italic">Log in to book</span>
+											)}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+
+					<div className="flex items-center gap-4 mt-6">
+						<button
+							disabled={page === 1 || loading}
+							onClick={() => handleSearch(undefined, page - 1)}
+							className="bg-gray-500 text-white px-4 py-1 rounded disabled:opacity-50 hover:bg-gray-600"
+						>
+							Anterior
+						</button>
+						<span className="font-semibold">Página {page} de {totalPages}</span>
+						<button
+							disabled={page >= totalPages || loading}
+							onClick={() => handleSearch(undefined, page + 1)}
+							className="bg-gray-500 text-white px-4 py-1 rounded disabled:opacity-50 hover:bg-gray-600"
+						>
+							Siguiente
+						</button>
+					</div>
+				</>
 			)}
 		</div>
 	);
